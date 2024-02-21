@@ -11,7 +11,7 @@ namespace PruebaTec02GSMC.Models
         public string? Descripcion { get; set; }
       
         public byte[]? Imagen { get; set; }
-        
+        [Display(Name = "Director")]
         public int Id { get; set; }
         [Display(Name = "Director")]
         public virtual Directore IdNavigation { get; set; } = null!;

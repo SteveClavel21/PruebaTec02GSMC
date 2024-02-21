@@ -86,7 +86,7 @@ namespace PruebaTec02GSMC.Controllers
             {
                 return NotFound();
             }
-            ViewData["Id"] = new SelectList(_context.Directores, "Id", "Id", pelicula.Id);
+            ViewData["Id"] = new SelectList(_context.Directores, "Id", "Nombre", pelicula.Id);
             return View(pelicula);
         }
 
@@ -102,38 +102,31 @@ namespace PruebaTec02GSMC.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (imagen != null && imagen.Length > 0)
             {
-                try
+                using (var memoryStream = new MemoryStream())
                 {
-                    _context.Update(pelicula);
-                    await _context.SaveChangesAsync();
+                    await imagen.CopyToAsync(memoryStream);
+                    pelicula.Imagen = memoryStream.ToArray();
                 }
-                catch (DbUpdateConcurrencyException)
-                {
+                _context.Update(pelicula);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                var producFind = await _context.Peliculas.FirstOrDefaultAsync(s => s.PeliculaId == pelicula.PeliculaId);
+                if (producFind?.Imagen?.Length > 0)
+                    pelicula.Imagen = producFind.Imagen;
+                producFind.Nombre = pelicula.Nombre;
+                producFind.Descripcion = pelicula.Descripcion;
 
-                    if (imagen != null && imagen.Length > 0)
-                    {
-                        using (var memoryStream = new MemoryStream())
-                        {
-                            await imagen.CopyToAsync(memoryStream);
-                            pelicula.Imagen = memoryStream.ToArray();
-                        }
-                        _context.Update(pelicula);
-                        await _context.SaveChangesAsync();
-                    }
-                    else
-                    {
-                        var producFind = await _context.Peliculas.FirstOrDefaultAsync(s => s.PeliculaId == pelicula.PeliculaId);
-                        if (producFind?.Imagen?.Length > 0)
-                            pelicula.Imagen = producFind.Imagen;
-                        producFind.Nombre = pelicula.Nombre;
-                        producFind.Descripcion = pelicula.Descripcion;
+                producFind.Id = pelicula.Id;
+                _context.Update(producFind);
+                await _context.SaveChangesAsync();
+            }
+           
 
-                        producFind.Id = pelicula.Id;
-                        _context.Update(producFind);
-                        await _context.SaveChangesAsync();
-                    } 
+                   
                    try { 
                     }
                     catch (DbUpdateConcurrencyException)
@@ -143,11 +136,11 @@ namespace PruebaTec02GSMC.Controllers
                             return NotFound();
                         }
                     }
-                }
+                
                 return RedirectToAction(nameof(Index));
-            }
-            ViewData["Id"] = new SelectList(_context.Directores, "Id", "Id", pelicula.Id);
-            return View(pelicula);
+            
+            //ViewData["Id"] = new SelectList(_context.Directores, "Id", "Id", pelicula.Id);
+            //return View(pelicula);
         }
 
         // GET: Peliculas/Delete/5
