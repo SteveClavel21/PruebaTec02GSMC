@@ -27,7 +27,18 @@
             @Html.DisplayNameFor(model => model.Imagen)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Imagen)
+            <div>
+                @{
+                    string urlBase64 = "";
+                    if (Model.Imagen != null && Model.Imagen.Length > 0)
+                    {
+                        string base64String = Convert.ToBase64String(Model.Imagen);
+                        urlBase64 = "data:image/jpeg;base64," + base64String;
+                    }
+                }
+                <img src="@urlBase64" width="40px" />
+
+            </div>
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.IdNavigation)

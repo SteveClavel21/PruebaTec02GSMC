@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using PruebaTec02GSMC.Models;
+
 namespace PruebaTec02GSMC
 {
     public class Program
@@ -8,6 +11,8 @@ namespace PruebaTec02GSMC
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddDbContext<PruebaTec02GSMCDBContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("conn")));
 
             var app = builder.Build();
 

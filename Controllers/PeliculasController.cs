@@ -47,7 +47,7 @@ namespace PruebaTec02GSMC.Controllers
         // GET: Peliculas/Create
         public IActionResult Create()
         {
-            ViewData["Id"] = new SelectList(_context.Directores, "Id", "Id");
+            ViewData["Id"] = new SelectList(_context.Directores, "Id", "Nombre");
             return View();
         }
 
@@ -56,16 +56,21 @@ namespace PruebaTec02GSMC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PeliculaId,Nombre,Descripcion,Imagen,Id")] Pelicula pelicula)
+        public async Task<IActionResult> Create([Bind("PeliculaId,Nombre,Descripcion,Id")] Pelicula pelicula, IFormFile imagen)
         {
-            if (ModelState.IsValid)
+            if (imagen !=null && imagen.Length > 0)
             {
-                _context.Add(pelicula);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                using (var memoryStream = new MemoryStream())
+                {
+                    await imagen.CopyToAsync(memoryStream);
+                    pelicula.Imagen = memoryStream.ToArray();
+                }
             }
-            ViewData["Id"] = new SelectList(_context.Directores, "Id", "Id", pelicula.Id);
-            return View(pelicula);
+
+            _context.Add(pelicula);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+         
         }
 
         // GET: Peliculas/Edit/5
@@ -90,7 +95,7 @@ namespace PruebaTec02GSMC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("PeliculaId,Nombre,Descripcion,Imagen,Id")] Pelicula pelicula)
+        public async Task<IActionResult> Edit(int id, [Bind("PeliculaId,Nombre,Descripcion,Id")] Pelicula pelicula, IFormFile imagen)
         {
             if (id != pelicula.PeliculaId)
             {
@@ -106,13 +111,37 @@ namespace PruebaTec02GSMC.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PeliculaExists(pelicula.PeliculaId))
+
+                    if (imagen != null && imagen.Length > 0)
                     {
-                        return NotFound();
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await imagen.CopyToAsync(memoryStream);
+                            pelicula.Imagen = memoryStream.ToArray();
+                        }
+                        _context.Update(pelicula);
+                        await _context.SaveChangesAsync();
                     }
                     else
                     {
-                        throw;
+                        var producFind = await _context.Peliculas.FirstOrDefaultAsync(s => s.PeliculaId == pelicula.PeliculaId);
+                        if (producFind?.Imagen?.Length > 0)
+                            pelicula.Imagen = producFind.Imagen;
+                        producFind.Nombre = pelicula.Nombre;
+                        producFind.Descripcion = pelicula.Descripcion;
+
+                        producFind.Id = pelicula.Id;
+                        _context.Update(producFind);
+                        await _context.SaveChangesAsync();
+                    } 
+                   try { 
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!PeliculaExists(id))
+                        {
+                            return NotFound();
+                        }
                     }
                 }
                 return RedirectToAction(nameof(Index));
