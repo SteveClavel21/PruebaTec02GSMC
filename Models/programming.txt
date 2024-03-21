@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Cafeteria Palace</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/CafeteriaPalace.styles.css" asp-append-version="true" />
+</head>
+
+<style>
+    .navbar-nav {
+        list-style: none;
+        padding: 0;
+        background: #ECD07F;
+        width: 90%;
+        
+        
+    }
+
+        .navbar-nav li a {
+            text-decoration: none;
+            color: white;
+            padding: 10px;
+            
+           
+            
+        }
+
+        .navbar-nav li{
+      
+            display: inline-block;
+            
+        }
+
+    .navbar-nav li a:hover {
+        background: #ef8354;
+    }
+
+    .navbar-toggler {
+        background: #ECD07F;
+        
+
+    }
+
+    .navbar {
+        background: #ECD07F;
+    }
+
+    . {
+        background: #ECD07F;
+    }
+</style>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-red border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Perfiles" asp-action="Index">Cafeteria Palace</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Perfiles" asp-action="Index">Perfil Cafeteria</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Empleadoes" asp-action="index">Empleados</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Productoes" asp-action="Index">Productos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Categorias" asp-action="Index">Categorias</a>
+                        </li>
+                         <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Perfiles" asp-action="Salir">Cerrar Sesion</a>
+                        </li> 
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+       @*  <div class="container">
+            &copy; 2024 - CafeteriaPalace - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div> *@
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+
+
+@model CafeteriaPalace.Models.Empleado
+
+<div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="card">
+        <div class="card-body">
+
+
+            @{
+                ViewData["Title"] = "Inicio de Sesion";
+            }
+
+            <form asp-controller="Perfiles" asp-action="Login" method="post">
+                <div class="form-group mb-2">
+                    <label>Correo</label>
+                    <input type="text" class="form-control" asp-for="Correo" />
+                </div>
+
+                <div class="form-group mb-2">
+                    <label>Contraseña</label>
+                    <input type="password" class="form-control" asp-for="Password" />
+                </div>
+
+                <button type="submit" class="btn btn-outline-success mb-2 mr-2">Iniciar Sesion</button>
+                <a class="btn btn-outline-warning mb-2 ml-2" asp-area="" asp-controller="Perfiles" asp-action="Create">Registrar Perfil</a>
+            </form>
+        </div>
+    </div>
+</div>
